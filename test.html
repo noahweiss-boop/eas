@@ -22,11 +22,8 @@
         body: document.getElementById("body").value || "This is a test alert."
       };
 
-      fetch("alerts.json", {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(payload)
-      }).then(() => alert("Test alert sent!"));
+      localStorage.setItem("testAlert", JSON.stringify(payload));
+      alert("Test alert sent!");
     }
   </script>
 </body>

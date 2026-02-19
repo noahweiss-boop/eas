@@ -1,6 +1,11 @@
+// Apple Valley, CA coordinates
+const NWS_URL =
+  "https://api.allorigins.win/raw?url=" +
+  encodeURIComponent("https://api.weather.gov/alerts/active?point=34.5,-117.2");
+
 async function getJSON(url) {
   try {
-    const r = await fetch(url + "?t=" + Date.now());
+    const r = await fetch(url + "&t=" + Date.now());
     return await r.json();
   } catch {
     return {};
@@ -8,9 +13,7 @@ async function getJSON(url) {
 }
 
 async function checkNWS() {
-  const url = "https://api.weather.gov/alerts/active?point=34.5,-117.2";
-  const data = await getJSON(url);
-
+  const data = await getJSON(NWS_URL);
   if (!data.features) return;
 
   data.features.forEach(alert => {
@@ -20,10 +23,15 @@ async function checkNWS() {
   });
 }
 
-async function checkTestAlert() {
-  const test = await getJSON("alerts.json");
-  if (!test.id) return;
+function checkTestAlert() {
+  const raw = localStorage.getItem("testAlert");
+  if (!raw) return;
+
+  const test = JSON.parse(raw);
   notify(test.title, test.body);
+
+  // Clear after showing
+  localStorage.removeItem("testAlert");
 }
 
 function notify(title, body) {
@@ -34,8 +42,8 @@ function notify(title, body) {
 
 async function loop() {
   await checkNWS();
-  await checkTestAlert();
-  setTimeout(loop, 60000);
+  checkTestAlert();
+  setTimeout(loop, 60000); // check every 60 seconds
 }
 
 if (Notification.permission !== "granted") {

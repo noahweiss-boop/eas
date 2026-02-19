@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Send Test Alert</title>
+</head>
+<body>
+  <h2>Send Test Alert</h2>
+
+  <label>Title:</label><br>
+  <input id="title" type="text" style="width:300px;"><br><br>
+
+  <label>Message:</label><br>
+  <textarea id="body" style="width:300px;height:100px;"></textarea><br><br>
+
+  <button onclick="sendAlert()">Send Alert</button>
+
+  <script>
+    function sendAlert() {
+      const payload = {
+        id: "test-" + Date.now(),
+        title: document.getElementById("title").value || "Test Alert",
+        body: document.getElementById("body").value || "This is a test alert."
+      };
+
+      fetch("alerts.json", {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+      }).then(() => alert("Test alert sent!"));
+    }
+  </script>
+</body>
+</html>
